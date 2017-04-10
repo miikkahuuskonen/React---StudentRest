@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>React + Spring</title>
+</head>
+
+<body>
+    <div class='container'>
+        <div id='root'></div>
+	</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react.min.js"></script>
+    <script src="https://fb.me/react-dom-15.0.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+
+	<script type="text/babel">
+
+	class App extends React.Component {
+		  constructor(props) {
+		      super(props);
+		      this.state = {
+		          students: [],
+		      };
+                this.inputChanged = this.inputChanged.bind(this);
+		   }
+		 
+		  componentDidMount() {
+			// Call load students
+              this.loadStudentsFromServer();
+		  }
+        
+        inputChanged(event) {
+            console.log(this.state.students)
+        }
+		  
+		  // Load students from database
+		  loadStudentsFromServer() {
+              console.log('fetching...');
+		      fetch('http://localhost:8080/api/students')
+                .then(result => result.json())
+                .then(result => {
+                  this.setState({students: result._embedded.students});
+
+			  	// Write your code here for fetching students
+		      });     
+		  } 
+		  
+		  render() {
+		    return (
+		       <div>
+                    <button class="btn btn-success" onClick={this.inputChanged}>Hae oppilaat</button>
+                    <StudentTable data={this.state.students}/>
+		       </div>
+		    );
+		  }
+    }
+		    	
+	class StudentTable extends React.Component {
+		constructor(props) {
+			super(props);
+            
+		}
+		    
+		render() {
+            
+            var rows = this.props.data.map(item =>
+            <Student item={item}/>
+            );
+      
+	    	return (
+				// Write your code here to render StudentTable
+                <table class="table table-striped">
+                    <thead>
+                        <tr>        
+                            <th>&nbsp;</th>
+                            <th>Nimi</th>
+                            <th>&nbsp;</th>
+                            <th>Sukunimi</th>
+                            <th>&nbsp;</th>
+                            <th>www-osoite</th>
+                        </tr>
+                    </thead>
+                    <tbody>{rows}</tbody>
+                </table>
+	     	);
+	  }
+	}
+		        
+	class Student extends React.Component {
+	    constructor(props) {
+	        super(props);
+	    }
+	 
+	    render() {
+	        return (
+				// Write your code here to render StudentTableRow
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>{this.props.item.firstName}</td>
+                    <td>&nbsp;</td>
+                    <td>{this.props.item.lastName}</td>
+                    <td>&nbsp;</td>
+                    <td>{this.props.item.email}</td>
+                    
+                </tr>
+	        );
+	    } 
+	}
+
+	ReactDOM.render(<App />, document.getElementById('root') );	
+	</script>
+
+</body>
+</html>
